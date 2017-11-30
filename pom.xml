@@ -4,23 +4,34 @@
 	<groupId>com.josemgimenez.jpa</groupId>
 	<artifactId>proxy-concept</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+
+	<properties>
+		<maven.compiler.source>1.7</maven.compiler.source>
+		<maven.compiler.target>1.7</maven.compiler.target>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.7.0</version>
+				<configuration>
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.target}</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
 	<dependencies>
-		<dependency>
-			<groupId>javax.persistence</groupId>
-			<artifactId>persistence-api</artifactId>
-			<version>1.0.2</version>
-		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
 			<version>5.2.12.Final</version>
-<!-- 			<exclusions>
-				<exclusion>
-					<groupId>org.hibernate.javax.persistence</groupId>
-					<artifactId>hibernate-jpa-2.1-api</artifactId>
-				</exclusion>
-			</exclusions>
- -->		</dependency>
+		</dependency>
+
+		<!-- Test dependencies -->
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
