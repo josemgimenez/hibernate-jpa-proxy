@@ -2,9 +2,11 @@ package com.josemgimenez.jpa.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 /**
  * Person entity
@@ -20,9 +22,7 @@ public class Person {
 	@Column
 	private String name;
 
-	@Column
-	private String surname;
-
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "department_id")
 	private Department department;
 
@@ -45,14 +45,6 @@ public class Person {
 		this.name = name;
 	}
 
-	public String getSurname() {
-		return surname;
-	}
-
-	public void setSurname(String surname) {
-		this.surname = surname;
-	}
-
 	public Department getDepartment() {
 		return department;
 	}
@@ -63,7 +55,7 @@ public class Person {
 
 	@Override
 	public String toString() {
-		return "Person [id=" + id + ", name=" + name + ", surname=" + surname + ", department=" + department + "]";
+		return "Person [id=" + id + ", name=" + name + ", department=" + department + "]";
 	}
 
 }
