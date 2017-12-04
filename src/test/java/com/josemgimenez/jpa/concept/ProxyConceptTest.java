@@ -4,23 +4,29 @@ import static org.junit.Assert.assertEquals;
 
 import javax.persistence.EntityManager;
 
-import org.hibernate.proxy.HibernateProxy;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.josemgimenez.jpa.model.Department;
 import com.josemgimenez.jpa.model.Person;
 
 public class ProxyConceptTest {
+	private static final Logger LOGGER = LoggerFactory.getLogger(ProxyConceptTest.class);
+
 	private final EntityManager entityManager = TestUtils.getTestEntityManager();
 
 	private Long departmentId;
 	private Long personId;
 
+	// ------------------------------------------------------------------------
+
 	@Before
 	public void prepareTest() {
+		LOGGER.info("HEY");
 		entityManager.getTransaction().begin();
 
 		Department department = new Department();
@@ -38,8 +44,11 @@ public class ProxyConceptTest {
 
 		entityManager.getTransaction().commit();
 
+		// detach everything
 		entityManager.clear();
 	}
+
+	// ------------------------------------------------------------------------
 
 	@After
 	public void cleanup() {
@@ -47,34 +56,42 @@ public class ProxyConceptTest {
 		personId = null;
 	}
 
+	// ------------------------------------------------------------------------
+
 	@Test
 	public void test1() {
 		// First load person
 		final Person person = entityManager.find(Person.class, personId);
-
-		Assert.assertNotNull("Person with id " + personId + " not found", person);
-		assertEquals(personId, person.getId());
-
 		final Department department = person.getDepartment();
-		Assert.assertNotNull(department);
-		assertEquals(departmentId, department.getId());
 
-		Assert.assertTrue("Department is instanceof HibernateProxy " + department.getClass(),
-				department instanceof HibernateProxy);
+		validateEntities(person, department);
 	}
+
+	// ------------------------------------------------------------------------
 
 	@Test
 	public void test2() {
 		// First load department
 		final Department department = entityManager.find(Department.class, departmentId);
+		final Person person = entityManager.find(Person.class, personId);
+
+		validateEntities(person, department);
+	}
+
+	// ------------------------------------------------------------------------
+
+	private void validateEntities(final Person person, final Department department) {
+		Assert.assertNotNull(person);
+		assertEquals(personId, person.getId());
+
 		Assert.assertNotNull(department);
 		assertEquals(departmentId, department.getId());
 
-		final Person person = entityManager.find(Person.class, personId);
-		Assert.assertNotNull("Person with id " + personId + " not found", person);
-		assertEquals(personId, person.getId());
+		final Long reflectionPersonId = TestUtils.getId(person, Person.class);
+		final Long reflectionDepartmentId = TestUtils.getId(department, Department.class);
 
-		Assert.assertTrue("Department is not instanceof HibernateProxy " + department.getClass(),
-				department instanceof HibernateProxy);
+		assertEquals(personId, reflectionPersonId);
+		assertEquals(departmentId, reflectionDepartmentId);
 	}
+
 }
